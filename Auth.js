@@ -3,8 +3,8 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const cors = require('cors')
 const jwt = require("jsonwebtoken")
-
-
+const WriteToMSSQL = require("./WriteToMSSQL")
+const ReadFromMSSQL = require("./ReadFromMSSQL")
 const port = 5000
 const app = express()
 
@@ -81,12 +81,41 @@ app.post("/refresh", (req, res) => {
         res.json({ Username: user, accessToken: accessToken, refreshToken: refreshToken })
 
     })
+
+})
+app.post(("/Auth"), authenticateToken, (req, res) => {
+
 })
 
 app.delete("/logout", (req, res) => {
+    console.log("delete")
     refTokens = []
     res.sendStatus(204)
 })
+
+app.get(("/sql"), (req, res) => {
+    WriteToMSSQL("Neko ime")
+    res.send("uneseno")
+})
+
+app.post(("/Home"), (req, res) => {
+    res.send("Access allowed")
+})
+app.post(("/HomePage"), async(req, res) => {
+    res.send(await ReadFromMSSQL(req.body.username + "%"))
+
+    /*
+    console.log(req.body.username)
+    WriteToMSSQL(req.body.username)*/
+})
+
+app.get(("/HomeGetData"), async (req, res) => {
+    res.send(await ReadFromMSSQL("user%"))
+    
+   
+
+})
+
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
